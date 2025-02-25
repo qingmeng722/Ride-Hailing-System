@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trips</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #343a40;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        .empty-message {
+            text-align: center;
+            margin-top: 1rem;
+            color: #6c757d;
+        }
+        a.edit-link {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a.edit-link:hover {
+            text-decoration: underline;
+        }
+        .back-home-container {
+         text-align: center;
+         margin-top: 30px; 
+       } 
+
+       .back-home {
+         display: inline-block;
+         padding: 10px 15px;
+         background-color: #007BFF;
+         color: #fff;
+         text-decoration: none;
+         border-radius: 4px;
+       }
+
+       .back-home:hover {
+         background-color: #0056b3;
+       }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Trips</h1>
+
+        <!-- Trips as Owner -->
+        <h2>Trips I Own</h2>
+        {% if owned_trips %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Destination</th>
+                        <th>Date</th>
+                        <th>Number</th>
+                        <th>Car Type</th>
+                        <th>Special</th>
+                        <th>Is Shared</th>
+                        <th>Shared With</th>
+                        <th>Is Confirmed</th>
+                        <th>Driver</th>
+                        <th>Is Complete</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in owned_trips %}
+                        <tr>
+                            <td>{{ trip.owner.username }}</td>
+                            <td>{{ trip.destination }}</td>
+                            <td>{{ trip.date }}</td>
+                            <td>{{ trip.number }}</td>
+                            <td>{{ trip.car_type }}</td>
+                            <td>{{ trip.special }}</td>
+                            <td>{{ trip.isShared|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if trip.shareSet.all %}
+                                    {% for user in trip.shareSet.all %}
+                                    {{ user.account.username }} ({{ user.number }}){% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ trip.isConfirmed|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if trip.driver %}
+                                    {{ trip.driver.drivername }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ trip.isComplete|yesno:"Yes,No" }}</td>
+                            <td>
+                                <a class="edit-link" href="{% url 'ride_system:TripEdit' trip.id %}">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">You don't own any trips yet.</p>
+        {% endif %}
+
+       <!-- Trips as Shared Member -->
+        <h2>Trips I'm Shared With</h2>
+        {% if shared_trips %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Destination</th>
+                        <th>Date</th>
+                        <th>Number</th>
+                        <th>Car Type</th>
+                        <th>Special</th>
+                        <th>Is Shared</th>
+                        <th>Shared With</th>
+                        <th>Is Confirmed</th>
+                        <th>Driver</th>
+                        <th>Is Complete</th>
+                        <th>Exit</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in shared_trips %}
+                        <tr>
+                            <td>{{ trip.owner.username }}</td>
+                            <td>{{ trip.destination }}</td>
+                            <td>{{ trip.date }}</td>
+                            <td>{{ trip.number }}</td>
+                            <td>{{ trip.car_type }}</td>
+                            <td>{{ trip.special }}</td>
+                            <td>{{ trip.isShared|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if trip.shareSet.all %}
+                                    {% for user in trip.shareSet.all %}
+                                    {{ user.account.username }} ({{ user.number }}){% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ trip.isConfirmed|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if trip.driver %}
+                                    {{ trip.driver.drivername }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ trip.isComplete|yesno:"Yes,No" }}</td>
+                            <td>
+                                <form action="{% url 'ride_system:TripExit' trip.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit">Exit</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">No trips shared with you yet.</p>
+        {% endif %}
+
+        <!-- Trips has confirmed -->
+        <h2>Trips have been confirmed</h2>
+        {% if confirmed_trips %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Destination</th>
+                        <th>Date</th>
+                        <th>Number</th>
+                        <th>Car Type</th>
+                        <th>Special</th>
+                        <th>Is Shared</th>
+                        <th>Shared With</th>
+                        <th>Is Confirmed</th>
+                        <th>Driver</th>
+                        <th>Is Complete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in confirmed_trips %}
+                        <tr>
+                            <td>{{ trip.owner.username }}</td>
+                            <td>{{ trip.destination }}</td>
+                            <td>{{ trip.date }}</td>
+                            <td>{{ trip.number }}</td>
+                            <td>{{ trip.car_type }}</td>
+                            <td>{{ trip.special }}</td>
+                            <td>{{ trip.isShared|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if trip.shareSet.all %}
+                                    {% for user in trip.shareSet.all %}
+                                        {{ user.username }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ trip.isConfirmed|yesno:"Yes,No" }}</td>
+                            <td>
+                                {% if trip.driver %}
+                                    {{ trip.driver.drivername }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ trip.isComplete|yesno:"Yes,No" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="empty-message">No trips confirmed yet.</p>
+        {% endif %}
+            <div class="back-home-container">
+              <a href="{% url 'ride_system:HomePage' %}" class="back-home">Back to Homepage</a>
+            </div>
+    </div>
+</body>
+</html>

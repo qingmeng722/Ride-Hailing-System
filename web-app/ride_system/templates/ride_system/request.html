@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group input[type="checkbox"] {
+            width: auto;
+        }
+        .form-actions {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .form-actions button {
+            padding: 0.5rem 1rem;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-actions button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Trip</h1>
+        <form action="{% url 'ride_system:Request' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="destination">Destination</label>
+                <input type="text" id="destination" name="destination" placeholder="Enter destination" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="datetime-local" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="number">Number of Passengers</label>
+                <input type="number" id="number" name="number" placeholder="Enter number of passengers" required>
+            </div>
+            <div class="form-group">
+                <label for="car_type">Car Type</label>
+                <input type="text" id="car_type" name="car_type" placeholder="Enter car type" required>
+            </div>
+            <div class="form-group">
+                <label for="special">Special Requirements</label>
+                <textarea id="special" name="special" rows="3" placeholder="Enter any special requirements"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="isShared">Is this a shared trip?</label>
+                <input type="checkbox" id="isShared" name="isShared">
+            </div>
+            <div class="form-actions">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

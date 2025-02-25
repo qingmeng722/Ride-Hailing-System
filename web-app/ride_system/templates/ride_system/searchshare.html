@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Trip Requests</title>
+    <style>
+       body {
+         font-family: Arial, sans-serif;
+         background-color: #f8f9fa;
+         padding: 20px;
+       }
+       .container {
+         max-width: 800px;
+         margin: auto;
+         background: #fff;
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+       }
+       .form-group {
+         margin-bottom: 15px;
+       }
+       label {
+         display: block;
+         margin-bottom: 5px;
+       }
+       input[type="text"], input[type="datetime-local"], input[type="number"] {
+         width: 100%;
+         padding: 8px;
+         box-sizing: border-box;
+       }
+       button {
+         padding: 10px 15px;
+         background-color: #007BFF;
+         color: #fff;
+         border: none;
+         border-radius: 4px;
+         cursor: pointer;
+       }
+       button:hover {
+         background-color: #0056b3;
+       }
+       table {
+         width: 100%;
+         border-collapse: collapse;
+         margin-top: 20px;
+       }
+       th, td {
+         border: 1px solid #ddd;
+         padding: 8px;
+         text-align: left;
+       }
+       th {
+         background-color: #f2f2f2;
+       }
+       .back-home-container {
+         text-align: center;
+         margin-top: 30px; 
+       } 
+
+       .back-home {
+         display: inline-block;
+         padding: 10px 15px;
+         background-color: #007BFF;
+         color: #fff;
+         text-decoration: none;
+         border-radius: 4px;
+       }
+
+       .back-home:hover {
+         background-color: #0056b3;
+       }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Search Sharable Open Trip Requests</h1>
+        <form method="get" action="{% url 'ride_system:SearchShare' %}">
+            <div class="form-group">
+                <label for="destination">Destination</label>
+                <input type="text" id="destination" name="destination" placeholder="Enter destination" value="{{ destination_query }}">
+            </div>
+            <div class="form-group">
+                <label for="arrival_from">Arrival Window From</label>
+                <input type="datetime-local" id="arrival_from" name="arrival_from" value="{{ arrival_from }}">
+            </div>
+            <div class="form-group">
+                <label for="arrival_to">Arrival Window To</label>
+                <input type="datetime-local" id="arrival_to" name="arrival_to" value="{{ arrival_to }}">
+            </div>
+            <div class="form-group">
+                <label for="passengers">Number of Passengers</label>
+                <input type="number" id="passengers" name="passengers" placeholder="Minimum passengers" value="{{ passengers }}">
+            </div>
+            <button type="submit">Search</button>
+        </form>
+
+        <h2>Search Results</h2>
+        {% if rides %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Owner</th>
+                        <th>Destination</th>
+                        <th>Date</th>
+                        <th>Capacity</th>
+                        <th>Special</th>
+                        <th>Join</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in rides %}
+                        <tr>
+                            <td>{{ trip.owner.username }}</td>
+                            <td>{{ trip.destination }}</td>
+                            <td>{{ trip.date }}</td>
+                            <td>{{ trip.number }}</td>
+                            <td>{{ trip.special }}</td>
+                            <td>
+                                <form method="post" action="{% url 'ride_system:TripJoin' trip.id %}">
+                                    <input type="hidden" name="join_number" value="{{passengers}}">
+                                    {% csrf_token %}
+                                    <button type="submit">Join</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No trip requests found matching your criteria.</p>
+        {% endif %}
+            <div class="back-home-container">
+              <a href="{% url 'ride_system:HomePage' %}" class="back-home">Back to Homepage</a>
+            </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .login-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .login-container h2 {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-actions {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .form-actions button {
+            padding: 0.5rem 1rem;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-actions button:hover {
+            background: #0056b3;
+        }
+        .form-actions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+        .form-actions ul li {
+            margin-top: 0.5rem;
+        }
+        .form-actions ul li a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .form-actions ul li a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form action="{% url 'ride_system:Login' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Login</button>
+            </div>
+        </form>
+        <div class="form-actions">
+            <ul>
+                <li><a href="{% url 'ride_system:CreateNewAccount' %}">Create a User Account</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
